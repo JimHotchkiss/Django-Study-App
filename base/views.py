@@ -1,6 +1,7 @@
 from urllib import response
 from django.shortcuts import render
 from .models import Room
+from .forms import RoomForm
 
 
 # Dummy data
@@ -24,6 +25,6 @@ def room(request, pk):
     return render(request, 'base/room.html', context)
 
 def createRoom(request):
-
-    context = {}
+    form = RoomForm()
+    context = { 'form': form }
     return render(request, 'base/room_form.html', context)
