@@ -23,6 +23,10 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    # We can create a class that customizes the oder of the rooms, the most recently created rooms appearing first. ['updated', 'created'] will render them in ascending order, if you put the - infront of each descripter, it will invert that order, or making it descending
+    class Meta:
+        ordering = ['-updated', '-created']
+
     def __str__(self):
         return self.name
 

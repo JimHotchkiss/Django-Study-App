@@ -1,5 +1,5 @@
 from urllib import response
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Room
 from .forms import RoomForm
 
@@ -26,7 +26,16 @@ def room(request, pk):
 
 def createRoom(request):
     form = RoomForm()
+# Instantiate a Room 
     if request.method == 'POST':
-        print(request.POST)
+        form = RoomForm(request.POST)
+        # We add the data to the form with request.POST, django already knows what information to extract from the input from our RoomForm
+        if form.is_valid():
+        # We use the is_valid() method to check the input data
+            form.save()
+        # If it is valid, we use the save() method to save the model in the database
+            return redirect('home')
+        # Now we'll redirect our user, using the redirect() method, back to the 'home' page. We can utilize the path name, from urls.py
+    
     context = { 'form': form }
     return render(request, 'base/room_form.html', context)
