@@ -28,6 +28,7 @@ def room(request, pk):
 def createRoom(request):
     form = RoomForm()
 # Instantiate a Room 
+
     if request.method == 'POST':
         form = RoomForm(request.POST)
         # We add the data to the form with request.POST, django already knows what information to extract from the input from our RoomForm
@@ -53,4 +54,12 @@ def updateRoom(request, pk):
 
     context ={'form': form}
     return render(request, 'base/room_form.html', context)
+
+
+def deleteRoom(request, pk):
+    room = Room.objects.get(id=pk)
+    if request.method == 'POST':
+        room.delete()
+        return redirect('home')
+    return render(request, 'base/delete.html', {'obj': room})
 
