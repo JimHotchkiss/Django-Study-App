@@ -1,7 +1,7 @@
 from mimetypes import init
 from urllib import response
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
 
 
@@ -15,8 +15,13 @@ from .forms import RoomForm
 def home(request):
     # We can create a variable to pass our dictionary in as a variable
     # We can pull objects from the db
-    rooms = Room.objects.all()
-    context = {'rooms':rooms}
+    # We'll grab the parameter defined in q and filter our rooms with this parameter
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    # Instead of grabbing all rooms, we'll filter through q. Note: this may include 'All' topics
+    # rooms = Room.objects.all()
+    rooms = Room.objects.filter(topic__name__icontains=q)
+    topics = Topic.objects.all()
+    context = {'rooms':rooms, 'topics': topics}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
