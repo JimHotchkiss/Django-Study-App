@@ -6,12 +6,10 @@ from .models import Room, Topic
 from .forms import RoomForm
 
 
-# Dummy data
-# rooms = [
-#     {'id':1, 'name':'lets learn python'},
-#     {'id':2, 'name':'Design with me'},
-#     {'id':3, 'name':'Frontend developers'}
-#     ]
+# User login 
+def loginPage(request):
+    context = {}
+    return render(request, 'base/login_register.html', context)
 # Create your views here.
 def home(request):
     # We can create a variable to pass our dictionary in as a variable
