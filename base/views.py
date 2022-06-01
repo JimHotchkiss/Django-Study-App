@@ -2,12 +2,38 @@
 # from urllib import response
 from django.db.models import Q 
 from django.shortcuts import render, redirect
+# Import User for our login 
+from django.contrib.auth.models import User
+# Import authenticate, login and logout
+from django.contrib.auth import authenticate, login, logout 
+# Import our flash message 
+from django.contrib import messages
 from .models import Room, Topic
 from .forms import RoomForm
 
 
 # User login 
 def loginPage(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # We want to check if the user exist
+        try:
+            user = User.objects.get(username=username)
+        except:
+        # If does not exist, we want to show the user a flash message
+            messages.error(request, 'User does not exist')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Username or Password does not exist')
+
     context = {}
     return render(request, 'base/login_register.html', context)
 # Create your views here.
