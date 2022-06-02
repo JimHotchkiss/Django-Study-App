@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 # Import User for our login 
 from django.contrib.auth.models import User
+# Import UserCreation Form
+from django.contrib.auth.forms import UserCreationForm
 # Import authenticate, login and logout
 from django.contrib.auth import authenticate, login, logout 
 # Import login_required 
@@ -14,16 +16,16 @@ from django.contrib import messages
 from .models import Room, Topic
 from .forms import RoomForm
 
-
 # User login 
 def loginPage(request):
+    page = 'login'
 
     if request.user.is_authenticated:
         return redirect('home')
 
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         # We want to check if the user exist
@@ -41,12 +43,27 @@ def loginPage(request):
         else:
             messages.error(request, 'Username or Password does not exist')
 
-    context = {}
+    context = {'page': page}
     return render(request, 'base/login_register.html', context)
 # Logout 
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
+def registerPage(request):
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit = False)
+            user.username = user.username.lower()
+            user.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'An error occurred during registration.')
+    return render(request, 'base/login_register.html', {'form': form })
 
 def home(request):
     # We can create a variable to pass our dictionary in as a variable
