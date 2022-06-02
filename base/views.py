@@ -1,11 +1,14 @@
-# from mimetypes import init
-# from urllib import response
+# Import HttpResponse
+import re
+from django.http import HttpResponse
 from django.db.models import Q 
 from django.shortcuts import render, redirect
 # Import User for our login 
 from django.contrib.auth.models import User
 # Import authenticate, login and logout
 from django.contrib.auth import authenticate, login, logout 
+# Import login_required 
+from django.contrib.auth.decorators import login_required
 # Import our flash message 
 from django.contrib import messages
 from .models import Room, Topic
@@ -14,6 +17,10 @@ from .forms import RoomForm
 
 # User login 
 def loginPage(request):
+
+    if request.user.is_authenticated:
+        return redirect('home')
+
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -36,7 +43,11 @@ def loginPage(request):
 
     context = {}
     return render(request, 'base/login_register.html', context)
-# Create your views here.
+# Logout 
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
+
 def home(request):
     # We can create a variable to pass our dictionary in as a variable
     # We can pull objects from the db
@@ -62,6 +73,7 @@ def room(request, pk):
     context = {'room':room}
     return render(request, 'base/room.html', context)
 
+@login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
 # Instantiate a Room 
@@ -79,9 +91,13 @@ def createRoom(request):
     context = { 'form': form }
     return render(request, 'base/room_form.html', context)
 
+@login_required(login_url='login')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
+
+    if request.user != room.host:
+        return HttpResponse('You are not authorized to update room')
 
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)
@@ -92,9 +108,13 @@ def updateRoom(request, pk):
     context ={'form': form}
     return render(request, 'base/room_form.html', context)
 
-
+@login_required(login_url='login')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
+
+    if request.user != room.host:
+        return HttpResponse('You are not authorized to delete room') 
+
     if request.method == 'POST':
         room.delete()
         return redirect('home')
