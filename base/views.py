@@ -124,7 +124,9 @@ def createRoom(request):
         # We add the data to the form with request.POST, django already knows what information to extract from the input from our RoomForm
         if form.is_valid():
         # We use the is_valid() method to check the input data
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
         # If it is valid, we use the save() method to save the model in the database
             return redirect('home')
         # Now we'll redirect our user, using the redirect() method, back to the 'home' page. We can utilize the path name, from urls.py
