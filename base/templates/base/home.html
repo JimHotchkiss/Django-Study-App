@@ -1,13 +1,12 @@
     {% extends 'main.html' %}
 
     {% block content %}
+    
     <main class="layout layout--3">
       <div class="container">
 
-        
         <!-- Topics Start -->
         {% include 'base/topics_component.html' %}
-      
         <!-- Topics End -->
 
         <!-- Room List Start -->
@@ -29,10 +28,11 @@
               <a class="btn btn--main btn--pill" href="#">Recent Activities</a>
             </div>
           </div>
+
           <div class="roomList__header">
             <div>
               <h2>Study Room</h2>
-              <p>7,439 Rooms available</p>
+              <p>{{ room_count }} Rooms available</p>
             </div>
             <a class="btn btn--main" href="create-room.html">
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
